@@ -66,20 +66,7 @@
           </v-col>
         </v-row>
 
-        <!-- API Token -->
-        <!-- Bu alanı artık gizliyoruz, çünkü token'ı LinkedSegment içinden alıyoruz.
-        <v-text-field
-          v-if="showTokenInput"
-          v-model="apiToken"
-          variant="outlined"
-          density="compact"
-          clearable
-          label="API Token"
-          hide-details
-        />
-        -->
 
-        <!-- Algorithm selection -->
         <v-select
           v-model="selectedAlgorithm"
           :items="algorithmOptions"
@@ -90,7 +77,7 @@
           class="mt-4"
         />
 
-        <!-- If user picks Mahalanobis, show a row for each y-variable -->
+        
         <template v-if="selectedAlgorithm === 'MahalanobisDistance' && !hideSettings">
           <div
             v-for="(yv, idx) in yVariables"
@@ -132,7 +119,7 @@
           </div>
         </template>
 
-        <!-- If user picks ZScore, show a row for each y-variable -->
+        
         <template v-if="selectedAlgorithm === 'ZScore' && !hideSettings">
           <div
             v-for="(yv, idx) in yVariables"
@@ -371,7 +358,7 @@ export default defineComponent({
       this.applyTheme();
     },
     selectedSegment() {
-      // Token ve Endpoint/Query "LinkedSegment" dan okuyalım
+      
       if (this.selectedSegment && this.selectedSegment.value) {
         // Token
         const tokenEl = this.selectedSegment.value.find((smc: any) =>
@@ -379,7 +366,7 @@ export default defineComponent({
         );
         if (tokenEl?.value) {
           this.apiToken = tokenEl.value;
-          this.showTokenInput = false; // Arayüzden almak yerine LinkedSegment'ten alınan token
+          this.showTokenInput = false; 
         }
       }
 
@@ -590,13 +577,13 @@ export default defineComponent({
         this.checkIdShort(smc, 'Query')
       )?.value;
 
-      // Yeni eklediğimiz Token alanını okuyalım:
+      
       const tokenEl = this.selectedSegment.value.find((smc: any) =>
         this.checkIdShort(smc, 'Token')
       );
       let segmentToken = tokenEl?.value || '';
       if (!segmentToken) {
-        // eğer segmentte token yoksa, fallback
+        
         segmentToken = this.apiToken;
       }
 
@@ -636,7 +623,7 @@ export default defineComponent({
       return this.detectDefault(data);
     },
 
-    // 1D old version - not recommended
+    
     detectMahalanobis1D(data: DataPoint[], recordIdShort: string): boolean[] {
       const recParams = this.mahParamsByIdShort[recordIdShort] || { mean: '0', invCov: '1', thresh: '999999' };
       const meanNum = parseFloat(recParams.mean || '0');
@@ -754,37 +741,37 @@ export default defineComponent({
     detectDefault(data: DataPoint[]): boolean[] {
       const anomalies: boolean[] = [];
 
-      // Pencere ve eşik değerleri
+      
       const wSize = this.windowSize || data.length;
       const threshold = this.thresholdMultiplier || 3;
       const burnIn = this.burnInPeriod || 0;
 
       for (let i = 0; i < data.length; i++) {
-        // Burn-in dönemi (ısınma)
+        // Burn-in 
         if (i < burnIn) {
           anomalies.push(false);
           continue;
         }
 
-        // i >= burnIn ise rolling window'u kullanarak lokal medyan ve MAD hesapla.
+        
         const startIndex = Math.max(burnIn, i - wSize + 1);
         const windowData = data.slice(startIndex, i + 1).map(pt => pt.value);
 
-        // Medyan hesabı
+        
         const sortedWindow = [...windowData].sort((a, b) => a - b);
         const mid = Math.floor(sortedWindow.length / 2);
         const median = sortedWindow.length % 2 !== 0
           ? sortedWindow[mid]
           : (sortedWindow[mid - 1] + sortedWindow[mid]) / 2;
 
-        // MAD (Medyan Mutlak Sapma) hesabı
+        
         const absDevs = windowData.map(v => Math.abs(v - median));
         const sortedAbs = absDevs.sort((a, b) => a - b);
         const mad = sortedAbs.length % 2 !== 0
           ? sortedAbs[mid]
           : (sortedAbs[mid - 1] + sortedAbs[mid]) / 2;
 
-        // Eşik kontrolü: distance > threshold * MAD
+        
         if (mad !== 0 && Math.abs(data[i].value - median) > threshold * mad) {
           anomalies.push(true);
         } else {
@@ -942,10 +929,10 @@ export default defineComponent({
     },
 
     initializeSeries(): void {
-      // If we want multi-dimensional Mahalanobis, let's do it here.
+      
       if (this.selectedAlgorithm === 'MahalanobisDistance' && this.yVariables.length > 1) {
         // handle multi-dim only if we have multiple sensors.
-        // (Potentially handle single-sensor 1D in fallback below.)
+        
         const allSeries = this.timeSeriesValues;
         // ensure all series are same length?
         const lengths = allSeries.map(arr => arr.length);
