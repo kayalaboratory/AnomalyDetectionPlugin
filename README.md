@@ -17,7 +17,7 @@ When Docker is set up, these containers should be seen on the docker app:
 
 Download the AnomalyDetectionPlugin and move it inside aas-web-ui/src/UserPlugins folder.
 
-![image](https://github.com/user-attachments/assets/9e4aec69-5b15-4af4-9a2a-08ae8cb9af6a)
+![image](https://github.com/user-attachments/assets/5fb177e6-7123-4ff5-b15b-3a9cf05dd645)
 
 
 Now start the containers except "aas-ui", we will start aas-ui from another source. For this go to basyx-aas-web-ui-main/aas-web-ui directory, run these commands:
